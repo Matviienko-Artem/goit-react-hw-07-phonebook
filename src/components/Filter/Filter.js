@@ -2,6 +2,7 @@ import React from 'react';
 import style from './Filter.module.css';
 import { connect } from 'react-redux';
 import * as actions from '../../redux/contact-form/contacts-action';
+import selectors from '../../redux/contact-form/contacts-selectors';
 
 const Filter = ({ value, onChange }) => {
   return (
@@ -22,7 +23,7 @@ const Filter = ({ value, onChange }) => {
 };
 
 const mapStateToProps = state => ({
-  value: state.contacts.filter,
+  value: selectors.getFilter(state),
 });
 
 const mapDispatchToProps = dispatch => ({

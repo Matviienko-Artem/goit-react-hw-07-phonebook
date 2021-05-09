@@ -1,7 +1,8 @@
 import React from 'react';
 import style from './ContactList.module.css';
 import { connect } from 'react-redux';
-import * as actions from '../../redux/contact-form/contacts-action';
+import operations from '../../redux/contact-form/contacts-operations';
+import selectors from '../../redux/contact-form/contacts-selectors';
 
 const ContactList = ({ contacts, ondeleteContact }) => {
   return (
@@ -25,18 +26,12 @@ const ContactList = ({ contacts, ondeleteContact }) => {
   );
 };
 
-const mapStateToProps = state => {
-  const { items, filter } = state.contacts;
-
-  return {
-    contacts: items.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLocaleLowerCase()),
-    ),
-  };
-};
+const mapStateToProps = state => ({
+  contacts: selectors.getVisibleContacs(state),
+});
 
 const mapDispatchToProps = dispatch => ({
-  ondeleteContact: contactId => dispatch(actions.DeleteContact(contactId)),
+  ondeleteContact: contactId => dispatch(operations.deleteContact(contactId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

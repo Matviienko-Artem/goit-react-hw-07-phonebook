@@ -1,13 +1,17 @@
 import { combineReducers } from 'redux';
 import { createReducer } from '@reduxjs/toolkit';
-import * as actions from './contacts-action';
-
-const itemsState = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-];
+import {
+  fetchContactRequest,
+  fetchContactSuccess,
+  fetchContactError,
+  addNewContactRequest,
+  addNewContactSuccess,
+  addNewContactError,
+  deleteContactRequest,
+  deleteContactSuccess,
+  deleteContactError,
+  changeFilter,
+} from './contacts-action';
 
 const addNew = (state, payload) => {
   const uniaqueName = state.find(
@@ -20,21 +24,35 @@ const addNew = (state, payload) => {
   } else if (uniaqueName) {
     alert(`${payload.name} уже есть в списке`);
   } else {
-    return [payload, ...state];
+    return [...state, payload];
   }
 };
 
-const itemsReducer = createReducer(itemsState, {
-  [actions.addNewContact]: (state, { payload }) => addNew(state, payload),
-  [actions.DeleteContact]: (state, { payload }) =>
+const itemsReducer = createReducer([], {
+  [fetchContactSuccess]: (_, { payload }) => payload,
+  [addNewContactSuccess]: (state, { payload }) => addNew(state, payload),
+  [deleteContactSuccess]: (state, { payload }) =>
     state.filter(contact => contact.id !== payload),
 });
 
 const filterReducer = createReducer('', {
-  [actions.changeFilter]: (_, { payload }) => payload,
+  [changeFilter]: (_, { payload }) => payload,
+});
+
+const loadingReducer = createReducer(false, {
+  [fetchContactRequest]: () => true,
+  [fetchContactSuccess]: () => false,
+  [fetchContactError]: () => false,
+  [addNewContactRequest]: () => true,
+  [addNewContactSuccess]: () => false,
+  [addNewContactError]: () => false,
+  [deleteContactRequest]: () => true,
+  [deleteContactSuccess]: () => false,
+  [deleteContactError]: () => false,
 });
 
 export default combineReducers({
   items: itemsReducer,
   filter: filterReducer,
+  loading: loadingReducer,
 });
